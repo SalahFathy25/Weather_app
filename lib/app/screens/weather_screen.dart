@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:weather_app/bloc/weather_bloc.dart';
-import 'package:weather_app/data/get_weather_icon.dart';
-import 'package:weather_app/widgets/my_item.dart';
-import 'package:weather_app/widgets/my_sized_box.dart';
+import 'package:weather_app/app/bloc/weather_bloc.dart';
+import 'package:weather_app/app/data/get_weather_icon.dart';
+import 'package:weather_app/app/widgets/my_item.dart';
+import 'package:weather_app/app/widgets/my_sized_box.dart';
 
 class WeatherScreen extends StatelessWidget {
   const WeatherScreen({super.key});

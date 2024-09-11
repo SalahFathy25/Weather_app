@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:weather_app/bloc/weather_bloc.dart';
-import 'package:weather_app/data/determine_position.dart';
+import 'package:weather_app/app/bloc/weather_bloc.dart';
+import 'package:weather_app/app/data/determine_position.dart';
 import 'package:weather_app/splash_screen.dart';
 
 void main() {

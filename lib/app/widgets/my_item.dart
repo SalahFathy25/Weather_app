@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/widgets/my_sized_box.dart';
+import 'package:weather_app/app/widgets/my_sized_box.dart';
 
 Widget MyItem(
     {required String image, required String label, required String value}) {
