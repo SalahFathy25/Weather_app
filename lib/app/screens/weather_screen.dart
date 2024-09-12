@@ -7,8 +7,16 @@ import 'package:weather_app/app/data/get_weather_icon.dart';
 import 'package:weather_app/app/widgets/my_item.dart';
 import 'package:weather_app/app/widgets/my_sized_box.dart';
 
-class WeatherScreen extends StatelessWidget {
+class WeatherScreen extends StatefulWidget {
   const WeatherScreen({super.key});
+
+  @override
+  State<WeatherScreen> createState() => _WeatherScreenState();
+}
+
+class _WeatherScreenState extends State<WeatherScreen> {
+  bool isSearching = false;
+  final TextEditingController searchController = TextEditingController();
 
   String formatDateTime(String inputDateTime) {
     try {
@@ -31,16 +39,26 @@ class WeatherScreen extends StatelessWidget {
     }
   }
 
+  void _onSearchButtonPressed() {
+    setState(() {
+      isSearching = !isSearching;
+      if (!isSearching) searchController.clear();
+    });
+  }
+
+  void _onSubmitted(String cityName) {
+    if (cityName.isNotEmpty) {
+      context.read<WeatherBloc>().add(SearchWeather(cityName));
+      setState(() {
+        isSearching = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
-      ),
       body: BlocBuilder<WeatherBloc, WeatherState>(
         builder: (context, state) {
           if (state is WeatherSuccess) {
@@ -60,11 +78,36 @@ class WeatherScreen extends StatelessWidget {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                padding: const EdgeInsets.only(left: 16, right: 16, top: 14),
+                child: ListView(
                   children: [
-                    mySizedBox(height: 30),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        isSearching
+                            ? Expanded(
+                                child: TextField(
+                                  controller: searchController,
+                                  style: const TextStyle(color: Colors.white),
+                                  decoration: const InputDecoration(
+                                    hintText: 'Enter city name',
+                                    hintStyle: TextStyle(color: Colors.white54),
+                                    border: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                  ),
+                                  onSubmitted: _onSubmitted,
+                                ),
+                              )
+                            : IconButton(
+                                onPressed: _onSearchButtonPressed,
+                                icon: const Icon(Icons.search_rounded),
+                                iconSize: 32,
+                                color: Colors.white,
+                              ),
+                      ],
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -93,29 +136,35 @@ class WeatherScreen extends StatelessWidget {
                     mySizedBox(height: 30),
                     GetWeatherIcon(code: state.weather.weatherConditionCode!),
                     mySizedBox(height: 20),
-                    Text(
-                      '${state.weather.temperature?.celsius?.round() ?? '--'} °C',
-                      style: const TextStyle(
-                        fontSize: 60,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      state.weather.weatherMain ?? '',
-                      style: const TextStyle(
-                        fontSize: 32,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    mySizedBox(height: 20),
-                    Text(
-                      formatDateTime('${state.weather.date}'),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                    Center(
+                      child: Column(
+                        children: [
+                          Text(
+                            '${state.weather.temperature?.celsius?.round() ?? '--'} °C',
+                            style: const TextStyle(
+                              fontSize: 60,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            state.weather.weatherMain ?? '',
+                            style: const TextStyle(
+                              fontSize: 32,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          mySizedBox(height: 20),
+                          Text(
+                            formatDateTime('${state.weather.date}'),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     mySizedBox(height: 30),
@@ -126,6 +175,9 @@ class WeatherScreen extends StatelessWidget {
                           image: 'assets/images/weather_app/sunrise.png',
                           label: 'Sunrise',
                           value: formatRiseAndSet('${state.weather.sunrise}'),
+                        ),
+                        const VerticalDivider(
+                          width: 30,
                         ),
                         MyItem(
                           image: 'assets/images/weather_app/sunset.png',
@@ -144,11 +196,25 @@ class WeatherScreen extends StatelessWidget {
                           value:
                               '${state.weather.tempMax?.celsius?.round() ?? '--'} °C',
                         ),
+                        const VerticalDivider(
+                          width: 30,
+                        ),
                         MyItem(
                           image: 'assets/images/weather_app/min_temp.png',
                           label: 'Temp Min',
                           value:
                               '${state.weather.tempMin?.celsius?.round() ?? '--'} °C',
+                        ),
+                      ],
+                    ),
+                    const Divider(height: 30, endIndent: 10, indent: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        MyItem(
+                          image: 'assets/images/weather_app/cloudiness.png',
+                          label: 'Cloudiness',
+                          value: '${state.weather.cloudiness}',
                         ),
                       ],
                     ),
