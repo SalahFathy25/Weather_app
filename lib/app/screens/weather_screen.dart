@@ -108,6 +108,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               ),
                       ],
                     ),
+                    mySizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
